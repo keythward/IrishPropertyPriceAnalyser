@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "IrishPropertyPriceAnalyser", "IrishPropertyPriceAnalyser\IrishPropertyPriceAnalyser.ccproj", "{1A334145-C868-4430-8EBF-B9C3354502FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebRole1", "WebRole1\WebRole1.csproj", "{8D971C9D-70DF-4DAE-AF97-26DCFF84921B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerRole1", "WorkerRole1\WorkerRole1.csproj", "{CEE687BE-5F22-480C-AA99-9645B0C37AF4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1A334145-C868-4430-8EBF-B9C3354502FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A334145-C868-4430-8EBF-B9C3354502FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A334145-C868-4430-8EBF-B9C3354502FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A334145-C868-4430-8EBF-B9C3354502FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D971C9D-70DF-4DAE-AF97-26DCFF84921B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D971C9D-70DF-4DAE-AF97-26DCFF84921B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D971C9D-70DF-4DAE-AF97-26DCFF84921B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D971C9D-70DF-4DAE-AF97-26DCFF84921B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEE687BE-5F22-480C-AA99-9645B0C37AF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEE687BE-5F22-480C-AA99-9645B0C37AF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEE687BE-5F22-480C-AA99-9645B0C37AF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEE687BE-5F22-480C-AA99-9645B0C37AF4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
