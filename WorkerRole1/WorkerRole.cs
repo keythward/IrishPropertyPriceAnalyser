@@ -9,6 +9,10 @@ using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Diagnostics;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Microsoft.WindowsAzure.Storage;
+using WorkerRole1.Model;
+using WorkerRole1.DatabaseConnections;
+using HtmlAgilityPack; // html agility pack
+using WorkerRole1.Records;
 
 namespace WorkerRole1
 {
@@ -16,6 +20,15 @@ namespace WorkerRole1
     {
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
+        public static DateTime dateTimeLastUpdated;
+        public static DateTime dateTimeUpdatedTo;
+
+        // list of counties
+        public enum County
+        {
+            Kerry, Cork, Limerick, Tipperary, Waterford, Kilkenny, Wexford, Laois, Carlow, Kildare, Wicklow,
+            Offaly, Dublin, Meath, Westmeath, Louth, Monaghan, Cavan, Longford, Donegal, Leitrim, Sligo, Roscommon, Mayo, Galway, Clare
+        };
 
         public override void Run()
         {
@@ -63,13 +76,143 @@ namespace WorkerRole1
 
         private async Task RunAsync(CancellationToken cancellationToken)
         {
-            // TODO: Replace the following with your own logic.
-            while (!cancellationToken.IsCancellationRequested)
+            // check if new documents need to be created
+            // documents created on first of every month for dublin and 1st of january and july for rest of country
+            if (DateTime.Now.Day == 1)
             {
-                Trace.TraceInformation("Working");
-                Console.WriteLine("working");
-                await Task.Delay(1000);
+                string year = DateTime.Now.Year.ToString()+"_";
+                List<AlteredRecord> list = new List<AlteredRecord>();
+                if (DateTime.Now.Month == 1)
+                {
+                    for (County co = County.Kerry; co <= County.Clare; co++)
+                    {
+                        if (co == County.Dublin)
+                        {
+                            DatabaseConnect db = new DatabaseConnect(co.ToString(), list);
+                            db.CreateDocument(year+"1");
+                        }
+                        else
+                        {
+                            DatabaseConnect db = new DatabaseConnect(co.ToString(), list);
+                            db.CreateDocument(year + "A");
+                        }
+                    }
+
+                }
+                else if (DateTime.Now.Month == 2)
+                {
+                    DatabaseConnect db = new DatabaseConnect("Dublin", list);
+                    db.CreateDocument(year + "2");
+                }
+                else if (DateTime.Now.Month == 3)
+                {
+                    DatabaseConnect db = new DatabaseConnect("Dublin", list);
+                    db.CreateDocument(year + "3");
+                }
+                else if (DateTime.Now.Month == 4)
+                {
+                    DatabaseConnect db = new DatabaseConnect("Dublin", list);
+                    db.CreateDocument(year + "4");
+                }
+                else if (DateTime.Now.Month == 5)
+                {
+                    DatabaseConnect db = new DatabaseConnect("Dublin", list);
+                    db.CreateDocument(year + "5");
+                }
+                else if (DateTime.Now.Month == 6)
+                {
+                    DatabaseConnect db = new DatabaseConnect("Dublin", list);
+                    db.CreateDocument(year + "6");
+                }
+                else if(DateTime.Now.Month == 7)
+                {
+                    for (County co = County.Kerry; co <= County.Clare; co++)
+                    {
+                        if (co == County.Dublin)
+                        {
+                            DatabaseConnect db = new DatabaseConnect(co.ToString(), list);
+                            db.CreateDocument(year + "7");
+                        }
+                        else
+                        {
+                            DatabaseConnect db = new DatabaseConnect(co.ToString(), list);
+                            db.CreateDocument(year + "B");
+                        }
+                    }
+                }
+                else if (DateTime.Now.Month == 8)
+                {
+                    DatabaseConnect db = new DatabaseConnect("Dublin", list);
+                    db.CreateDocument(year + "8");
+                }
+                else if (DateTime.Now.Month == 9)
+                {
+                    DatabaseConnect db = new DatabaseConnect("Dublin", list);
+                    db.CreateDocument(year + "9");
+                }
+                else if (DateTime.Now.Month == 10)
+                {
+                    DatabaseConnect db = new DatabaseConnect("Dublin", list);
+                    db.CreateDocument(year + "10");
+                }
+                else if (DateTime.Now.Month == 11)
+                {
+                    DatabaseConnect db = new DatabaseConnect("Dublin", list);
+                    db.CreateDocument(year + "11");
+                }
+                else 
+                {
+                    DatabaseConnect db = new DatabaseConnect("Dublin", list);
+                    db.CreateDocument(year + "12");
+                }
             }
+            // get dates from database document and check them against the websites dates to see if update available
+            UpdateDates update = DatabaseDates.ReadDatesDocument().Result;
+            dateTimeLastUpdated = update.lastUpdate;
+            dateTimeUpdatedTo = update.updatedTo;
+            if (UpdateAvailable(update.lastUpdate))
+            {
+                //update data
+            }
+            // close the program
+            OnStop();
+        }
+
+        // check if an update is available
+        public bool UpdateAvailable(DateTime lastTimeProjectUpdated)
+        {
+            Console.WriteLine("checking for website update on: " + DateTime.Now.ToString());
+            bool updateAvailable = false;
+            string url = "https://www.propertypriceregister.ie/website/npsra/pprweb.nsf/PPRDownloads?OpenForm";
+            try
+            {
+                var Webget = new HtmlWeb();
+                var doc = Webget.Load(url);
+                var node = doc.DocumentNode.SelectSingleNode("//span[@id='LastUpdated']");
+                if (node != null)
+                {
+                    var innerText = node.InnerText;
+                    DateTime lastTimeWebsiteUpdated = Convert.ToDateTime(innerText);
+                    if (!DateTime.Equals(lastTimeWebsiteUpdated, lastTimeProjectUpdated))
+                    {
+                        updateAvailable = true;
+                        Console.WriteLine("website update found");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("ERROR: node for updated website date is empty");
+                }
+            }
+            catch (WebException ex) // exception thrown if url not found
+            {
+                Console.WriteLine("URL not found exception: " + ex.Message);
+            }
+            catch(FormatException ex) // format is not datetime
+            {
+                Console.WriteLine("ERROR: node format does not match a DateTime format: " + ex.Message);
+            }
+            return updateAvailable;
         }
     }
 }
