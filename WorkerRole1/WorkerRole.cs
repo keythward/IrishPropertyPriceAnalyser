@@ -1,18 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.WindowsAzure;
-using Microsoft.WindowsAzure.Diagnostics;
 using Microsoft.WindowsAzure.ServiceRuntime;
-using Microsoft.WindowsAzure.Storage;
 using WorkerRole1.Model;
 using WorkerRole1.DatabaseConnections;
 using HtmlAgilityPack; // html agility pack
 using WorkerRole1.Records;
+using WorkerRole1.Data;
 
 namespace WorkerRole1
 {
@@ -172,7 +169,21 @@ namespace WorkerRole1
             dateTimeUpdatedTo = update.updatedTo;
             if (UpdateAvailable(update.lastUpdate))
             {
-                //update data
+                // download file
+                DownloadFile dlf = new DownloadFile(dateTimeUpdatedTo.Year.ToString());
+                string success = dlf.Download(); // returns null if no download or filename if success
+                if (success != null)
+                {
+                    Console.WriteLine("PPR file downloaded sucessfully");
+                    List<Record> recordList = dlf.ConvertFile(success); // returns list of record objects for sorting
+                    if(recordList!=null || recordList.Count > 0) // list is null if has thrown exception or could be empty
+                    {
+                        CleanUpRecords cur = new CleanUpRecords();
+                        List<AlteredRecord> alteredRecords= cur.CleanRecords(recordList); // clean records and return an altered record list
+                        AddToDatabase atb = new AddToDatabase(); 
+                        atb.AddList(alteredRecords,dateTimeUpdatedTo); // send list of to be broken down into counties and added to database documents
+                    }
+                }
             }
             // close the program
             OnStop();

@@ -66,7 +66,48 @@ namespace WorkerRole1.DatabaseConnections
         // update a modified document
         public async Task<Document> UpdateDocument(DocumentCollection coll, DBRecord record)
         {
-            return await client.UpsertDocumentAsync(coll.SelfLink, record);
+            var updateDone = false;
+            Document doc = null;
+            while (!updateDone)
+            {
+                try
+                {
+                    Console.WriteLine("updating document for: " + record.id + " on: " + DateTime.Now.ToString());
+                    doc=await client.UpsertDocumentAsync(coll.SelfLink, record);
+                    Console.WriteLine("document was updated: " + document.id);
+                    updateDone = true;
+                }
+                catch (DocumentClientException documentClientException)
+                {
+                    var statusCode = (int)documentClientException.StatusCode;
+                    if (statusCode == 429 || statusCode == 503)
+                    {
+                        Thread.Sleep(documentClientException.RetryAfter);
+                    }
+                    else
+                    {
+                        Console.WriteLine("ERROR: updating document: " + document.id);
+                        updateDone = true;
+                    }
+                }
+                catch (AggregateException aggregateException)
+                {
+                    if (aggregateException.InnerException.GetType() == typeof(DocumentClientException))
+                    {
+
+                        var docExcep = aggregateException.InnerException as DocumentClientException;
+                        var statusCode = (int)docExcep.StatusCode;
+                        if (statusCode == 429 || statusCode == 503)
+                            Thread.Sleep(docExcep.RetryAfter);
+                        else
+                        {
+                            Console.WriteLine("ERROR: updating document: " + document.id);
+                            updateDone = true;
+                        }
+                    }
+                }
+            }
+            return doc;
         }
 
         // create a document
@@ -91,7 +132,7 @@ namespace WorkerRole1.DatabaseConnections
                     if (statusCode == 429 || statusCode == 503)
                         Thread.Sleep(documentClientException.RetryAfter);
                     else
-                        throw;
+                        Console.WriteLine("ERROR: creating document: " + document.id);
                 }
                 catch (AggregateException aggregateException)
                 {
@@ -103,7 +144,7 @@ namespace WorkerRole1.DatabaseConnections
                         if (statusCode == 429 || statusCode == 503)
                             Thread.Sleep(docExcep.RetryAfter);
                         else
-                            throw;
+                            Console.WriteLine("ERROR: creating document: " + document.id);
                     }
                 }
             }
@@ -120,16 +161,22 @@ namespace WorkerRole1.DatabaseConnections
             {
                 docrecord.records.Add(lo);
             }
-            Document newdoc = await UpdateDocument(collection, docrecord);
+            //await UpdateDocument(collection, docrecord);
         }
 
         // read a document, modify it, call update method on modified document-dublin only
         // with dublin we replace whole document
-        public async void ModifyDocumentDublin(DBRecord record)
+        public async void ModifyDocumentDublin(string year,int month)
         {
             Database database = GetDatabase(DatabaseId).Result;
             DocumentCollection collection = GetCollection(database, CollectionId).Result;
-            await UpdateDocument(collection, record);
+            string added = year + "_" + month;
+            document.id = document.id + added;
+            Document doc=await UpdateDocument(collection, document);
+            if (doc != null)
+            {
+                Console.WriteLine("document: " + document.id + " updated");
+            }
         }
     }
 

@@ -89,6 +89,9 @@
   <ItemGroup>
     <Compile Include="DatabaseConnections\DatabaseConnect.cs" />
     <Compile Include="DatabaseConnections\DatabaseDates.cs" />
+    <Compile Include="Data\AddToDatabase.cs" />
+    <Compile Include="Data\CleanUpRecords.cs" />
+    <Compile Include="Data\DownloadFile.cs" />
     <Compile Include="Model\DBRecord.cs" />
     <Compile Include="Model\UpdateDates.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
