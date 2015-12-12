@@ -53,6 +53,7 @@ namespace WorkerRole1.DatabaseConnections
             Database database = GetDatabase(DatabaseId).Result;
             DocumentCollection collection = GetCollection(database, CollectionId).Result;
             await UpdateDocument(collection, update);
+            Console.WriteLine("new update date: " + update.lastUpdate.ToString() + " new updated to date: " + update.updatedTo.ToString());
             Console.WriteLine("update dates document modified");
         }
 

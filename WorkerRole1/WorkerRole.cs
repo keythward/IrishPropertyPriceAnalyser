@@ -17,8 +17,8 @@ namespace WorkerRole1
     {
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
-        public static DateTime dateTimeLastUpdated;
-        public static DateTime dateTimeUpdatedTo;
+        public static DateTime dateTimeLastUpdated; // date website last updated
+        public static DateTime dateTimeUpdatedTo; // date documents updated too
 
         // list of counties
         public enum County
@@ -46,9 +46,6 @@ namespace WorkerRole1
         {
             // Set the maximum number of concurrent connections
             ServicePointManager.DefaultConnectionLimit = 12;
-
-            // For information on handling configuration changes
-            // see the MSDN topic at http://go.microsoft.com/fwlink/?LinkId=166357.
 
             bool result = base.OnStart();
 
@@ -169,21 +166,8 @@ namespace WorkerRole1
             dateTimeUpdatedTo = update.updatedTo;
             if (UpdateAvailable(update.lastUpdate))
             {
-                // download file
-                DownloadFile dlf = new DownloadFile(dateTimeUpdatedTo.Year.ToString());
-                string success = dlf.Download(); // returns null if no download or filename if success
-                if (success != null)
-                {
-                    Console.WriteLine("PPR file downloaded sucessfully");
-                    List<Record> recordList = dlf.ConvertFile(success); // returns list of record objects for sorting
-                    if(recordList!=null || recordList.Count > 0) // list is null if has thrown exception or could be empty
-                    {
-                        CleanUpRecords cur = new CleanUpRecords();
-                        List<AlteredRecord> alteredRecords= cur.CleanRecords(recordList); // clean records and return an altered record list
-                        AddToDatabase atb = new AddToDatabase(); 
-                        atb.AddList(alteredRecords,dateTimeUpdatedTo); // send list of to be broken down into counties and added to database documents
-                    }
-                }
+                // the main tasks of an update
+                MainTasks(dateTimeUpdatedTo.Year.ToString());
             }
             // close the program
             OnStop();
@@ -208,6 +192,7 @@ namespace WorkerRole1
                     {
                         updateAvailable = true;
                         Console.WriteLine("website update found");
+                        dateTimeLastUpdated = lastTimeWebsiteUpdated; // change date of last website update
                     }
                 }
                 else
@@ -224,6 +209,48 @@ namespace WorkerRole1
                 Console.WriteLine("ERROR: node format does not match a DateTime format: " + ex.Message);
             }
             return updateAvailable;
+        }
+
+        // the main tasks of an update
+        public static void MainTasks(string year)
+        {
+            // download file
+            DownloadFile dlf = new DownloadFile(year);
+            string success = dlf.Download(); // returns null if no download or filename if success
+            if (success != null)
+            {
+                Console.WriteLine("PPR file downloaded sucessfuly");
+                List<Record> recordList = dlf.ConvertFile(success); // returns list of record objects for sorting
+                if (recordList != null || recordList.Count > 0) // list is null if has thrown exception or could be empty
+                {
+                    CleanUpRecords cur = new CleanUpRecords();
+                    List<AlteredRecord> alteredRecords = cur.CleanRecords(recordList); // clean records and return an altered record list
+                    AddToDatabase atb = new AddToDatabase();
+                    if (dateTimeUpdatedTo.Year.ToString().Equals(year)) // if for this year
+                    {
+                        atb.AddList(alteredRecords, dateTimeUpdatedTo); // send list of to be broken down into counties and added to database documents
+                    }
+                    else // if for last year
+                    {
+                        atb.AddListLastYear(alteredRecords,year); // send list of to be broken down into counties and added to database documents
+                    }
+                    AlterUpdateDates(); // change the dates in the update document to the new dates
+                }
+            }
+        }
+
+        // change the dates document
+        public static void AlterUpdateDates()
+        {
+            UpdateDates update = new UpdateDates();
+            update.lastUpdate = dateTimeLastUpdated;
+            update.updatedTo = dateTimeUpdatedTo;
+            update.id = "update_dates";
+            if (update.updatedTo.Month == 12 && update.updatedTo.Day == 31) // if 31st december push to 1st january
+            {
+                update.updatedTo = update.updatedTo.AddDays(1);
+            }
+            DatabaseDates.ModifyDatesDocument(update);
         }
     }
 }

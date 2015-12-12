@@ -74,7 +74,6 @@ namespace WorkerRole1.DatabaseConnections
                 {
                     Console.WriteLine("updating document for: " + record.id + " on: " + DateTime.Now.ToString());
                     doc=await client.UpsertDocumentAsync(coll.SelfLink, record);
-                    Console.WriteLine("document was updated: " + document.id);
                     updateDone = true;
                 }
                 catch (DocumentClientException documentClientException)
@@ -152,16 +151,17 @@ namespace WorkerRole1.DatabaseConnections
 
         // read a document, modify it, call update method on modified document-all counties but dublin
         // with all other counties we add to the list on the document
-        public async void ModifyDocumentBoggers(string docitem)
+        public async void ModifyDocumentBoggers(string year,char group)
         {
             Database database = GetDatabase(DatabaseId).Result;
             DocumentCollection collection = GetCollection(database, CollectionId).Result;
-            DBRecord docrecord = (DBRecord)client.CreateDocumentQuery(collection.DocumentsLink).Where(x => x.Id == docitem).AsEnumerable().FirstOrDefault();
-            foreach (ListObject lo in document.records)
+            string added = year + "_" + group;
+            document.id = document.id + added;
+            Document doc = await UpdateDocument(collection, document);
+            if (doc != null)
             {
-                docrecord.records.Add(lo);
+                Console.WriteLine("document: " + document.id + " updated");
             }
-            //await UpdateDocument(collection, docrecord);
         }
 
         // read a document, modify it, call update method on modified document-dublin only
