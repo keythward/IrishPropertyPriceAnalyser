@@ -4,6 +4,7 @@ using Microsoft.Azure.Documents; // documentdb
 using Microsoft.Azure.Documents.Client; // documentdb
 using Microsoft.Azure.Documents.Linq; // documentdb
 using System;
+using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,11 +15,12 @@ namespace WorkerRole1.DatabaseConnections
     public class DatabaseDates
     {
         // db connection strings
+        private static string connStr = ConfigurationManager.ConnectionStrings["DatabaseConnectionString"].ConnectionString;
+        //private static string connStr= RoleEnvironment.GetConfigurationSettingValue("DatabaseConnectionString");
         private static string EndpointUri = "https://ppr.documents.azure.com:443/";
-        private static string AuthorizationKey = "vsM9HJjmfmWRzyUZ3tIUrtxEk4zM1vqScU09vM47XybdVdSGn4Qll+8jHloQWBREg/cpk+8TruuZZT/aV11cPw==";
         private static string DatabaseId = "ppr_database";
         private static string CollectionId = "ppr_records";
-        private static DocumentClient client = new DocumentClient(new Uri(EndpointUri), AuthorizationKey);
+        private static DocumentClient client = new DocumentClient(new Uri(EndpointUri), connStr);
 
         // create or return a database connection
         public static async Task<Database> GetDatabase(string databaseName)

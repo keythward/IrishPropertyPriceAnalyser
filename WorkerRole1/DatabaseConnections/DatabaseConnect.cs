@@ -10,17 +10,19 @@ using Microsoft.Azure.Documents.Linq; // documentdb
 using System.Threading;
 using WorkerRole1.Records;
 using WorkerRole1.Model;
+using System.Configuration;
 
 namespace WorkerRole1.DatabaseConnections
 {
     public class DatabaseConnect
     {
         // db connection strings
+        private static string connStr = ConfigurationManager.ConnectionStrings["DatabaseConnectionString"].ConnectionString;
+        //private static string connStr = RoleEnvironment.GetConfigurationSettingValue("DatabaseConnectionString");
         private static string EndpointUri = "https://ppr.documents.azure.com:443/";
-        private static string AuthorizationKey = "vsM9HJjmfmWRzyUZ3tIUrtxEk4zM1vqScU09vM47XybdVdSGn4Qll+8jHloQWBREg/cpk+8TruuZZT/aV11cPw==";
         private static string DatabaseId = "ppr_database";
         private static string CollectionId = "ppr_records";
-        private static DocumentClient client = new DocumentClient(new Uri(EndpointUri), AuthorizationKey);
+        private static DocumentClient client = new DocumentClient(new Uri(EndpointUri), connStr);
         // fields
         public DBRecord document;
 

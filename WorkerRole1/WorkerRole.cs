@@ -10,6 +10,7 @@ using WorkerRole1.DatabaseConnections;
 using HtmlAgilityPack; // html agility pack
 using WorkerRole1.Records;
 using WorkerRole1.Data;
+using System.Configuration;
 
 namespace WorkerRole1
 {

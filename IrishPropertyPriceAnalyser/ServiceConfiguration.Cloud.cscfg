@@ -9,7 +9,8 @@
   <Role name="WorkerRole1">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=pprdiagnostics;AccountKey=hm62rz7FvBGllJiA/c8NaJne8kOrrDrgkMpnqpswBfreGd6uR5OH7oj6dn+6riRDVR9tKNejiPtoZI2mL5P3Gw==" />
+      <Setting name="DatabaseConnectionString" value="vsM9HJjmfmWRzyUZ3tIUrtxEk4zM1vqScU09vM47XybdVdSGn4Qll+8jHloQWBREg/cpk+8TruuZZT/aV11cPw==" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>

@@ -18,6 +18,7 @@
   <WorkerRole name="WorkerRole1" vmsize="Small">
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
+      <Setting name="DatabaseConnectionString" />
     </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>
