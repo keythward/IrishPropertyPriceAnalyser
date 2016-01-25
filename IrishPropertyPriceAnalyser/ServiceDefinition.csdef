@@ -10,6 +10,8 @@
     </Sites>
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
+      <Setting name="DatabaseEndpointUriWeb" />
+      <Setting name="DatabaseConnectionStringReadOnly" />
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="Endpoint1" protocol="http" port="80" />
@@ -19,6 +21,7 @@
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
       <Setting name="DatabaseConnectionString" />
+      <Setting name="DatabaseEndpointUri" />
     </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>

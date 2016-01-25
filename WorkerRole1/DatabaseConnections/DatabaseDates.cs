@@ -5,6 +5,7 @@ using Microsoft.Azure.Documents.Client; // documentdb
 using Microsoft.Azure.Documents.Linq; // documentdb
 using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,11 +16,14 @@ namespace WorkerRole1.DatabaseConnections
     public class DatabaseDates
     {
         // db connection strings
+        // from config file
         private static string connStr = ConfigurationManager.ConnectionStrings["DatabaseConnectionString"].ConnectionString;
+        private static string EndpointUri = ConfigurationManager.ConnectionStrings["DatabaseEndpointUri"].ConnectionString;
+        // from Azure
         //private static string connStr= RoleEnvironment.GetConfigurationSettingValue("DatabaseConnectionString");
-        private static string EndpointUri = "https://ppr.documents.azure.com:443/";
-        private static string DatabaseId = "ppr_database";
-        private static string CollectionId = "ppr_records";
+        //private static string EndpointUri= RoleEnvironment.GetConfigurationSettingValue("DatabaseEndpointUri");
+        private static string DatabaseId = "db";
+        private static string CollectionId = "records";
         private static DocumentClient client = new DocumentClient(new Uri(EndpointUri), connStr);
 
         // create or return a database connection
@@ -52,10 +56,12 @@ namespace WorkerRole1.DatabaseConnections
         public static async void ModifyDatesDocument(UpdateDates update)
         {
             Console.WriteLine("modifying: update dates document");
+            Trace.TraceInformation("worker role:modifying: update dates document");
             Database database = GetDatabase(DatabaseId).Result;
             DocumentCollection collection = GetCollection(database, CollectionId).Result;
             await UpdateDocument(collection, update);
             Console.WriteLine("new update date: " + update.lastUpdate.ToString() + " new updated to date: " + update.updatedTo.ToString());
+            Trace.TraceInformation("worker role: new update date: " + update.lastUpdate.ToString() + " new updated to date: " + update.updatedTo.ToString());
             Console.WriteLine("update dates document modified");
         }
 

@@ -11,17 +11,21 @@ using System.Threading;
 using WorkerRole1.Records;
 using WorkerRole1.Model;
 using System.Configuration;
+using System.Diagnostics;
 
 namespace WorkerRole1.DatabaseConnections
 {
     public class DatabaseConnect
     {
         // db connection strings
+        // from config file
         private static string connStr = ConfigurationManager.ConnectionStrings["DatabaseConnectionString"].ConnectionString;
-        //private static string connStr = RoleEnvironment.GetConfigurationSettingValue("DatabaseConnectionString");
-        private static string EndpointUri = "https://ppr.documents.azure.com:443/";
-        private static string DatabaseId = "ppr_database";
-        private static string CollectionId = "ppr_records";
+        private static string EndpointUri = ConfigurationManager.ConnectionStrings["DatabaseEndpointUri"].ConnectionString;
+        // from Azure
+        //private static string connStr= RoleEnvironment.GetConfigurationSettingValue("DatabaseConnectionString");
+        //private static string EndpointUri= RoleEnvironment.GetConfigurationSettingValue("DatabaseEndpointUri");
+        private static string DatabaseId = "db";
+        private static string CollectionId = "records";
         private static DocumentClient client = new DocumentClient(new Uri(EndpointUri), connStr);
         // fields
         public DBRecord document;
@@ -75,7 +79,8 @@ namespace WorkerRole1.DatabaseConnections
                 try
                 {
                     Console.WriteLine("updating document for: " + record.id + " on: " + DateTime.Now.ToString());
-                    doc=await client.UpsertDocumentAsync(coll.SelfLink, record);
+                    Trace.TraceInformation("worker role: updating document for: " + record.id + " on: " + DateTime.Now.ToString());
+                    doc =await client.UpsertDocumentAsync(coll.SelfLink, record);
                     updateDone = true;
                 }
                 catch (DocumentClientException documentClientException)
@@ -88,6 +93,7 @@ namespace WorkerRole1.DatabaseConnections
                     else
                     {
                         Console.WriteLine("ERROR: updating document: " + document.id);
+                        Trace.TraceInformation("worker role ERROR: updating document: " + document.id);
                         updateDone = true;
                     }
                 }
@@ -103,6 +109,7 @@ namespace WorkerRole1.DatabaseConnections
                         else
                         {
                             Console.WriteLine("ERROR: updating document: " + document.id);
+                            Trace.TraceInformation("worker role ERROR: updating document: " + document.id);
                             updateDone = true;
                         }
                     }
@@ -121,10 +128,12 @@ namespace WorkerRole1.DatabaseConnections
                 try
                 {
                     Console.WriteLine("creating document for: " + document.id +" on: "+DateTime.Now.ToString());
+                    Trace.TraceInformation("worker role: creating document for: " + document.id + " on: " + DateTime.Now.ToString());
                     Database database = GetDatabase(DatabaseId).Result;
                     DocumentCollection collection = GetCollection(database, CollectionId).Result;
                     await client.CreateDocumentAsync(collection.SelfLink, document);
                     Console.WriteLine("document was created: " + document.id);
+                    Trace.TraceInformation("worker role: document was created: " + document.id);
                     queryDone = true;
                 }
                 catch (DocumentClientException documentClientException)
@@ -133,7 +142,11 @@ namespace WorkerRole1.DatabaseConnections
                     if (statusCode == 429 || statusCode == 503)
                         Thread.Sleep(documentClientException.RetryAfter);
                     else
+                    {
                         Console.WriteLine("ERROR: creating document: " + document.id);
+                        Trace.TraceInformation("worker role ERROR: creating document: " + document.id);
+                    }
+                        
                 }
                 catch (AggregateException aggregateException)
                 {
@@ -145,7 +158,11 @@ namespace WorkerRole1.DatabaseConnections
                         if (statusCode == 429 || statusCode == 503)
                             Thread.Sleep(docExcep.RetryAfter);
                         else
+                        {
                             Console.WriteLine("ERROR: creating document: " + document.id);
+                            Trace.TraceInformation("worker role ERROR: creating document: " + document.id);
+                        }
+                            
                     }
                 }
             }
@@ -163,6 +180,7 @@ namespace WorkerRole1.DatabaseConnections
             if (doc != null)
             {
                 Console.WriteLine("document: " + document.id + " updated");
+                Trace.TraceInformation("worker role: document: " + document.id + " updated");
             }
         }
 
@@ -178,6 +196,7 @@ namespace WorkerRole1.DatabaseConnections
             if (doc != null)
             {
                 Console.WriteLine("document: " + document.id + " updated");
+                Trace.TraceInformation("worker role: document: " + document.id + " updated");
             }
         }
     }

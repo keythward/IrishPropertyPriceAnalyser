@@ -74,6 +74,7 @@ namespace WorkerRole1
             // documents created on first of every month for dublin and 1st of january and july for rest of country
             if (DateTime.Now.Day == 1)
             {
+                Trace.TraceInformation("Worker role running on first of month, creating new documents");
                 string year = DateTime.Now.Year.ToString()+"_";
                 List<AlteredRecord> list = new List<AlteredRecord>();
                 if (DateTime.Now.Month == 1)
@@ -177,6 +178,7 @@ namespace WorkerRole1
         public bool UpdateAvailable(DateTime lastTimeProjectUpdated)
         {
             Console.WriteLine("checking for website update on: " + DateTime.Now.ToString());
+            Trace.TraceInformation("checking for website update on: " + DateTime.Now.ToString());
             bool updateAvailable = false;
             string url = "https://www.propertypriceregister.ie/website/npsra/pprweb.nsf/PPRDownloads?OpenForm";
             try
@@ -192,21 +194,25 @@ namespace WorkerRole1
                     {
                         updateAvailable = true;
                         Console.WriteLine("website update found");
+                        Trace.TraceInformation("website update found");
                         dateTimeLastUpdated = lastTimeWebsiteUpdated; // change date of last website update
                     }
                 }
                 else
                 {
                     Console.WriteLine("ERROR: node for updated website date is empty");
+                    Trace.TraceInformation("worker role ERROR: node for updated website date is empty");
                 }
             }
             catch (WebException ex) // exception thrown if url not found
             {
                 Console.WriteLine("URL not found exception: " + ex.Message);
+                Trace.TraceInformation("worker role: URL not found exception: " + ex.Message);
             }
             catch(FormatException ex) // format is not datetime
             {
                 Console.WriteLine("ERROR: node format does not match a DateTime format: " + ex.Message);
+                Trace.TraceInformation("worker role ERROR: node format does not match a DateTime format: " + ex.Message);
             }
             return updateAvailable;
         }
@@ -220,6 +226,7 @@ namespace WorkerRole1
             if (success != null)
             {
                 Console.WriteLine("PPR file downloaded sucessfuly");
+                Trace.TraceInformation("worker role: PPR file downloaded sucessfuly");
                 List<Record> recordList = dlf.ConvertFile(success); // returns list of record objects for sorting
                 if (recordList != null || recordList.Count > 0) // list is null if has thrown exception or could be empty
                 {
@@ -229,12 +236,12 @@ namespace WorkerRole1
                     if (dateTimeUpdatedTo.Year.ToString().Equals(year)) // if for this year
                     {
                         atb.AddList(alteredRecords, dateTimeUpdatedTo); // send list of to be broken down into counties and added to database documents
+                        AlterUpdateDates(); // change the dates in the update document to the new dates
                     }
                     else // if for last year
                     {
                         atb.AddListLastYear(alteredRecords,year); // send list of to be broken down into counties and added to database documents
                     }
-                    AlterUpdateDates(); // change the dates in the update document to the new dates
                 }
             }
         }
