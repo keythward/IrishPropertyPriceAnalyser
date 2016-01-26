@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿// main controller for site
+
 using System.Web.Mvc;
+using WebRole1.Models;
 
 namespace WebRole1.Controllers
 {
@@ -25,6 +24,20 @@ namespace WebRole1.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        // GET: home/search
+        [HttpGet]
+        public ActionResult Search()
+        {
+            return View();
+        }
+
+        // POST: home/search
+        [HttpPost]
+        public ActionResult Search(Search searchFor)
+        {
+            return View(searchFor);
         }
     }
 }
