@@ -2,21 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using WorkerRole1.Model;
 using WorkerRole1.DatabaseConnections;
 using HtmlAgilityPack; // html agility pack
 using WorkerRole1.Records;
 using WorkerRole1.Data;
+using System.Threading;
 
 namespace WorkerRole1
 {
     public class WorkerRole : RoleEntryPoint
     {
-        private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-        private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
         public static DateTime dateTimeLastUpdated; // date website last updated
         public static DateTime dateTimeUpdatedTo; // date documents updated too
 
@@ -32,13 +29,10 @@ namespace WorkerRole1
             Trace.TraceInformation("WorkerRole1 is running");
             Console.WriteLine("running");
 
-            try
+            while (true)
             {
-                this.RunAsync(this.cancellationTokenSource.Token).Wait();
-            }
-            finally
-            {
-                this.runCompleteEvent.Set();
+                RunAsync();
+                Thread.Sleep(86460000); // sleep for 24 hours
             }
         }
 
@@ -60,15 +54,12 @@ namespace WorkerRole1
             Trace.TraceInformation("WorkerRole1 is stopping");
             Console.WriteLine("stopping");
 
-            this.cancellationTokenSource.Cancel();
-            this.runCompleteEvent.WaitOne();
-
             base.OnStop();
 
             Trace.TraceInformation("WorkerRole1 has stopped");
         }
 
-        private async Task RunAsync(CancellationToken cancellationToken)
+        private void RunAsync()
         {
             // check if new documents need to be created
             // documents created on first of every month for dublin and 1st of january and july for rest of country
@@ -170,8 +161,6 @@ namespace WorkerRole1
                 // the main tasks of an update
                 MainTasks(dateTimeUpdatedTo.Year.ToString());
             }
-            // close the program
-            OnStop();
         }
 
         // check if an update is available
@@ -233,15 +222,8 @@ namespace WorkerRole1
                     CleanUpRecords cur = new CleanUpRecords();
                     List<AlteredRecord> alteredRecords = cur.CleanRecords(recordList); // clean records and return an altered record list
                     AddToDatabase atb = new AddToDatabase();
-                    if (dateTimeUpdatedTo.Year.ToString().Equals(year)) // if for this year
-                    {
-                        atb.AddList(alteredRecords, dateTimeUpdatedTo); // send list of to be broken down into counties and added to database documents
-                        AlterUpdateDates(); // change the dates in the update document to the new dates
-                    }
-                    else // if for last year
-                    {
-                        atb.AddListLastYear(alteredRecords,year); // send list of to be broken down into counties and added to database documents
-                    }
+                    atb.AddList(alteredRecords, dateTimeUpdatedTo); // send list of to be broken down into counties and added to database documents
+                    AlterUpdateDates(); // change the dates in the update document to the new dates
                 }
             }
         }

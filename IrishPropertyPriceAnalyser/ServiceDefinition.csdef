@@ -23,5 +23,8 @@
       <Setting name="DatabaseConnectionString" />
       <Setting name="DatabaseEndpointUri" />
     </ConfigurationSettings>
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
   </WorkerRole>
 </ServiceDefinition>

@@ -1,5 +1,8 @@
 ﻿// main controller for site
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using WebRole1.Models;
 
@@ -35,7 +38,7 @@ namespace WebRole1.Controllers
 
         // POST: home/search
         [HttpPost]
-        public ActionResult Search(Search searchFor)
+        public ActionResult Search(SearchDB searchFor)
         {
             return View(searchFor);
         }

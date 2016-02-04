@@ -3,6 +3,7 @@
 using Microsoft.Azure.Documents; // documentdb
 using Microsoft.Azure.Documents.Client; // documentdb
 using Microsoft.Azure.Documents.Linq; // documentdb
+using Microsoft.WindowsAzure.ServiceRuntime;
 using System;
 using System.Configuration;
 using System.Diagnostics;
@@ -17,11 +18,11 @@ namespace WorkerRole1.DatabaseConnections
     {
         // db connection strings
         // from config file
-        private static string connStr = ConfigurationManager.ConnectionStrings["DatabaseConnectionString"].ConnectionString;
-        private static string EndpointUri = ConfigurationManager.ConnectionStrings["DatabaseEndpointUri"].ConnectionString;
+        //private static string connStr = ConfigurationManager.ConnectionStrings["DatabaseConnectionString"].ConnectionString;
+        //private static string EndpointUri = ConfigurationManager.ConnectionStrings["DatabaseEndpointUri"].ConnectionString;
         // from Azure
-        //private static string connStr= RoleEnvironment.GetConfigurationSettingValue("DatabaseConnectionString");
-        //private static string EndpointUri= RoleEnvironment.GetConfigurationSettingValue("DatabaseEndpointUri");
+        private static string connStr= RoleEnvironment.GetConfigurationSettingValue("DatabaseConnectionString");
+        private static string EndpointUri= RoleEnvironment.GetConfigurationSettingValue("DatabaseEndpointUri");
         private static string DatabaseId = "db";
         private static string CollectionId = "records";
         private static DocumentClient client = new DocumentClient(new Uri(EndpointUri), connStr);
