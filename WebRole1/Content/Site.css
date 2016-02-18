@@ -22,3 +22,43 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+#toggle-postcode-dropdown{
+    display:none;
+}
+
+#dates-dropdown2
+{
+    display:none;
+}
+
+.padding-top-25
+{
+    padding-top:25px;
+}
+
+.padding-bottom-25
+{
+    padding-bottom:25px;
+}
+
+.table-panel
+{
+    padding-left:0;
+    padding-right:0;
+}
+
+.border-1px
+{
+    border:1px solid #000000;
+}
+
+@-moz-document url-prefix() {
+  fieldset { display: table-cell; }
+}
+
+@media only screen and (min-width : 768px) 
+{
+
+}

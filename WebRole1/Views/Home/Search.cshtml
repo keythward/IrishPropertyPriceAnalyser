@@ -4,98 +4,216 @@
     ViewBag.Title = "Search";
 }
 
-<h2>Search</h2>
+<div class="text-center">
+    <h2>Search the Property Price Register Database</h2>
+</div>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Search</h4>
+
+    <div class="container-fluid">
         <hr />
         @Html.ValidationSummary(true)
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.County, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.County, new SelectList(WebRole1.Models.SearchDB.Counties))
-            </div>
+        <div class="row">
+
+            <div class="panel-info col-xs-12 col-md-6">
+                <div class="panel-heading">Instructions</div>
+                <div class="panel-body">
+                    <p><strong>STEP 1</strong> Choose a County. If the County is Dublin also choose a PostCode</p>
+                    <p><strong>STEP 2</strong> Choose a Year</p>
+                    <p><strong>STEP 3</strong> Refine the search if needed for a more exact set of results</p>
+                    <p><strong>STEP 4</strong> Run the search by clicking the search button</p>
+                    <p></p>
+                    <p>*  Dwelling type is considered new if it was built within 5 years of the purchase date.</p>
+                </div>
             </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Year, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model=>model.Year,new SelectList(WebRole1.Models.SearchDB.Years))
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Value, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.Value, new SelectList(WebRole1.Models.SearchDB.ValueRange))
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Dwelling, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.Dwelling, new SelectList(WebRole1.Models.SearchDB.DwellingTypes))
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.MarketPrice, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.MarketPrice, new SelectList(WebRole1.Models.SearchDB.MarketPriceDecision))
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.PostCode, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.PostCode, new SelectList(WebRole1.Models.SearchDB.PostalCodes))
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.KeyWord, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.KeyWord, new { htmlAttributes = new { @class = "form-control" } });
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Search" class="btn btn-default" />
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Dates, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.Dates, new SelectList(WebRole1.Models.SearchDB.DatesBetween))
-            </div>
-        </div>
-
-        @{
-            if (IsPost)
-            {
-                <div class="form-group">
-                    @Html.LabelFor(model => model.Found, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.DisplayFor(model => model.Found.Count)
+            <div class="panel-info col-xs-12 col-md-6">
+                <div class="panel-heading">Options</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12">
+                            <div class="col-xs-12 col-md-6 col-sm-6">
+                                @Html.LabelFor(model => model.County)
+                            </div>                           
+                            <div class="col-xs-12 col-md-6 col-sm-6">
+                                @Html.DropDownListFor(model => model.County, new SelectList(WebRole1.Models.SearchDB.Counties), new { @id = "counties-dropdown", @onchange = "showDublinDropdown()", @Title = "list of counties", @class = "col-md-7 col-xs-12" })
+                                @Html.DropDownListFor(model => model.PostCode, new SelectList(WebRole1.Models.SearchDB.PostalCodes), new { @id = "toggle-postcode-dropdown", @Title = "list of post codes", @class = "col-md-5 col-xs-12" })
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-12">
+                            <div class="col-xs-12 col-md-6 col-sm-6">
+                                @Html.LabelFor(model => model.Year)
+                            </div>
+                            <div class="col-xs-12 col-md-6 col-sm-6">
+                                @Html.DropDownListFor(model => model.Year, new SelectList(WebRole1.Models.SearchDB.Years), new { @Title = "list of years", @class = "col-md-7 col-xs-12" })
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-12">
+                            <div class="col-xs-12 col-md-6 col-sm-6">
+                                @Html.LabelFor(model => model.Dates)
+                            </div>
+                            <div class="col-xs-12 col-md-6 col-sm-6">
+                                @Html.DropDownListFor(model => model.Dates, new SelectList(WebRole1.Models.SearchDB.DatesBetween), new { id = "dates-dropdown1", @Title = "choose a date range", @class = "col-md-7 col-xs-12" })
+                                @Html.DropDownListFor(model => model.Dates, new SelectList(WebRole1.Models.SearchDB.DatesBetweenDublin), new { id = "dates-dropdown2", @Title = "choose a date range", @class = "col-md-7 col-xs-12" })
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-12">
+                            <div class="col-xs-12 col-md-6 col-sm-6">
+                                @Html.LabelFor(model => model.MarketPrice)
+                            </div>
+                            <div class="col-xs-12 col-md-6 col-sm-6">
+                                @Html.DropDownListFor(model => model.MarketPrice, new SelectList(WebRole1.Models.SearchDB.MarketPriceDecision), new { @Title = "choose did the property sell for market price or not", @class = "col-md-7 col-xs-12" })
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-12">
+                            <div class="col-xs-12 col-md-6 col-sm-6">
+                                @Html.LabelFor(model => model.Dwelling)
+                            </div>
+                            <div class="col-xs-12 col-md-6 col-sm-6">
+                                @Html.DropDownListFor(model => model.Dwelling, new SelectList(WebRole1.Models.SearchDB.DwellingTypes), new { @Title = "choose the type of property dwelling", @class = "col-md-7 col-xs-12" })
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-12">
+                            <div class="col-xs-12 col-md-6 col-sm-6">
+                                @Html.LabelFor(model => model.PriceValue)
+                            </div>
+                            <div class="col-xs-12 col-md-6 col-sm-6">
+                                @Html.EditorFor(model => model.PriceValue, new { htmlAttributes = new { @Title = "choose the maximum value a property can be" , @class = "col-md-7 col-xs-12" } })
+                                @Html.ValidationMessageFor(model => model.PriceValue, "", new { @class = "text-danger col-xs-12 col-sm-12 col-md-12" })
+                            </div>
+                        </div>
+                        <div class="col-xs-4 col-xs-offset-4 padding-top-25">
+                            <input type="submit" value="Search" class="btn btn-default" />
+                        </div>
                     </div>
                 </div>
-            }
-        }
-    </div>
-}
+            </div>
 
-<div>
-    @Html.ActionLink("Back to Home Page", "Index")
-</div>
+            <div class="panel-info col-xs-12 col-md-12">
+                <div class="panel-heading">
+                    Search Results
+                </div>
+                <div class="panel-body table-panel">
+                    <div class="table-responsive">
+                        <table id="results-table" class="display table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Price</th>
+                                    <th>Address</th>
+                                    <th>Sold On</th>
+                                    <th>Dwelling Type</th>
+                                    <th>Market Price Met</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Tiger Nixon</td>
+                                    <td>System Architect</td>
+                                    <td>Edinburgh</td>
+                                    <td>61</td>
+                                    <td>2011/04/25</td>
+                                </tr>
+                                <tr>
+                                    <td>Garrett Winters</td>
+                                    <td>Accountant</td>
+                                    <td>Tokyo</td>
+                                    <td>63</td>
+                                    <td>2011/07/25</td>
+                                </tr>
+                                <tr>
+                                    <td>Garrett Winters</td>
+                                    <td>Accountant</td>
+                                    <td>Tokyo</td>
+                                    <td>63</td>
+                                    <td>2011/07/25</td>
+                                </tr>
+                                <tr>
+                                    <td>Garrett Winters</td>
+                                    <td>Accountant blah blah, blah</td>
+                                    <td>Tokyo</td>
+                                    <td>63</td>
+                                    <td>2011/07/25</td>
+                                </tr>
+                                <tr>
+                                    <td>Garrett Winters</td>
+                                    <td>Accountant</td>
+                                    <td>Tokyo</td>
+                                    <td>63</td>
+                                    <td>2011/07/25</td>
+                                </tr>
+                                <tr>
+                                    <td>Garrett Winters</td>
+                                    <td>Accountant</td>
+                                    <td>Tokyo</td>
+                                    <td>63</td>
+                                    <td>2011/07/25</td>
+                                </tr>
+                                <tr>
+                                    <td>Garrett Winters</td>
+                                    <td>Accountant</td>
+                                    <td>Tokyo</td>
+                                    <td>63</td>
+                                    <td>2011/07/25</td>
+                                </tr>
+                                <tr>
+                                    <td>Garrett Winters</td>
+                                    <td>Accountant</td>
+                                    <td>Tokyo</td>
+                                    <td>63</td>
+                                    <td>2011/07/25</td>
+                                </tr>
+                                <tr>
+                                    <td>Garrett Winters</td>
+                                    <td>Accountant</td>
+                                    <td>Tokyo</td>
+                                    <td>63</td>
+                                    <td>2011/07/25</td>
+                                </tr>
+                                <tr>
+                                    <td>Garrett Winters</td>
+                                    <td>Accountant</td>
+                                    <td>Tokyo</td>
+                                    <td>63</td>
+                                    <td>2011/07/25</td>
+                                </tr>
+                                <tr>
+                                    <td>Garrett Winters</td>
+                                    <td>Accountant</td>
+                                    <td>Tokyo</td>
+                                    <td>63</td>
+                                    <td>2011/07/25</td>
+                                </tr>
+                                <tr>
+                                    <td>Garrett Winters</td>
+                                    <td>Accountant</td>
+                                    <td>Tokyo</td>
+                                    <td>63</td>
+                                    <td>2011/07/25</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+        </div>
+                </div>
+                }
+
+                <div>
+                    @Html.ActionLink("Back to Home Page", "Index")
+                </div>
+
+                @section Scripts {
+                    @Scripts.Render("~/bundles/jqueryval")
+                    <script>
+                        $(document).ready(function(){
+                        $('#results-table').dataTable();
+                        });
+                    </script>
+                }
+
