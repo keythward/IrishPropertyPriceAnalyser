@@ -26,8 +26,7 @@
                     <p><strong>STEP 2</strong> Choose a Year</p>
                     <p><strong>STEP 3</strong> Refine the search if needed for a more exact set of results</p>
                     <p><strong>STEP 4</strong> Run the search by clicking the search button</p>
-                    <p></p>
-                    <p>*  Dwelling type is considered new if it was built within 5 years of the purchase date.</p>
+                    <p class="padding-top-25">*  Dwelling type is considered new if it was built within 5 years of the purchase date.</p>
                 </div>
             </div>
 
@@ -83,8 +82,10 @@
                             </div>
                             <div class="col-xs-12 col-md-6 col-sm-6">
                                 @Html.EditorFor(model => model.PriceValue, new { htmlAttributes = new { @Title = "choose the maximum value a property can be" , @class = "col-md-7 col-xs-12" } })
-                                @Html.ValidationMessageFor(model => model.PriceValue, "", new { @class = "text-danger col-xs-12 col-sm-12 col-md-12" })
                             </div>
+                        </div>
+                        <div class="col-xs-12 col-md-12">
+                            @Html.ValidationMessageFor(model => model.PriceValue, "", new { @class = "text-danger col-xs-12 col-md-10 text-center" })
                         </div>
                         <div class="col-xs-4 col-xs-offset-4 padding-top-25">
                             <input type="submit" value="Search" class="btn btn-default" />
@@ -110,90 +111,24 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Tiger Nixon</td>
-                                    <td>System Architect</td>
-                                    <td>Edinburgh</td>
-                                    <td>61</td>
-                                    <td>2011/04/25</td>
-                                </tr>
-                                <tr>
-                                    <td>Garrett Winters</td>
-                                    <td>Accountant</td>
-                                    <td>Tokyo</td>
-                                    <td>63</td>
-                                    <td>2011/07/25</td>
-                                </tr>
-                                <tr>
-                                    <td>Garrett Winters</td>
-                                    <td>Accountant</td>
-                                    <td>Tokyo</td>
-                                    <td>63</td>
-                                    <td>2011/07/25</td>
-                                </tr>
-                                <tr>
-                                    <td>Garrett Winters</td>
-                                    <td>Accountant blah blah, blah</td>
-                                    <td>Tokyo</td>
-                                    <td>63</td>
-                                    <td>2011/07/25</td>
-                                </tr>
-                                <tr>
-                                    <td>Garrett Winters</td>
-                                    <td>Accountant</td>
-                                    <td>Tokyo</td>
-                                    <td>63</td>
-                                    <td>2011/07/25</td>
-                                </tr>
-                                <tr>
-                                    <td>Garrett Winters</td>
-                                    <td>Accountant</td>
-                                    <td>Tokyo</td>
-                                    <td>63</td>
-                                    <td>2011/07/25</td>
-                                </tr>
-                                <tr>
-                                    <td>Garrett Winters</td>
-                                    <td>Accountant</td>
-                                    <td>Tokyo</td>
-                                    <td>63</td>
-                                    <td>2011/07/25</td>
-                                </tr>
-                                <tr>
-                                    <td>Garrett Winters</td>
-                                    <td>Accountant</td>
-                                    <td>Tokyo</td>
-                                    <td>63</td>
-                                    <td>2011/07/25</td>
-                                </tr>
-                                <tr>
-                                    <td>Garrett Winters</td>
-                                    <td>Accountant</td>
-                                    <td>Tokyo</td>
-                                    <td>63</td>
-                                    <td>2011/07/25</td>
-                                </tr>
-                                <tr>
-                                    <td>Garrett Winters</td>
-                                    <td>Accountant</td>
-                                    <td>Tokyo</td>
-                                    <td>63</td>
-                                    <td>2011/07/25</td>
-                                </tr>
-                                <tr>
-                                    <td>Garrett Winters</td>
-                                    <td>Accountant</td>
-                                    <td>Tokyo</td>
-                                    <td>63</td>
-                                    <td>2011/07/25</td>
-                                </tr>
-                                <tr>
-                                    <td>Garrett Winters</td>
-                                    <td>Accountant</td>
-                                    <td>Tokyo</td>
-                                    <td>63</td>
-                                    <td>2011/07/25</td>
-                                </tr>
+
+                                @{
+                                    if (IsPost)
+                                    {
+                                        foreach (var r in Model.FetchResults)
+                                        {
+                                            <tr>
+                                                <td>@r.Price</td>
+                                                <td>@r.Address</td>
+                                                <td>@r.SoldOn</td>
+                                                <td>@r.Description</td>
+                                                <td>@r.NotFullMP</td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                                
+             
                             </tbody>
                         </table>
                     </div>
@@ -212,7 +147,10 @@
                     @Scripts.Render("~/bundles/jqueryval")
                     <script>
                         $(document).ready(function(){
-                        $('#results-table').dataTable();
+                            $('#results-table').dataTable();
+                        });
+                        $(window).load(function () {
+                            searchButtonOnDublinClick();
                         });
                     </script>
                 }

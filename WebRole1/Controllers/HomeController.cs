@@ -43,7 +43,7 @@ namespace WebRole1.Controllers
                 client.Timeout = 20000;
                 client.EnableSsl = true;
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                client.Credentials = new System.Net.NetworkCredential("ward.keyth2@outlook.com", "");
+                client.Credentials = new System.Net.NetworkCredential("ward.keyth2@outlook.com", "blackburn9823");
 
                 msg.From = new MailAddress("ward.keyth2@outlook.com");
                 msg.To.Add("ward.keyth@gmail.com");

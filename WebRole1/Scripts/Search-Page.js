@@ -11,3 +11,13 @@
     }
 }
 
+function searchButtonOnDublinClick() {
+    if ($("#counties-dropdown option:selected").text() == "Dublin")
+    {
+        $("#toggle-postcode-dropdown").show();
+    }
+    else {
+        $("#toggle-postcode-dropdown").hide();
+    }
+}
+
