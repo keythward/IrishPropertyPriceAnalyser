@@ -54,6 +54,10 @@ textarea {
     border:1px solid #000000;
 }
 
+.editorRow{
+    border:2px solid #E6E6FA;
+}
+
 @-moz-document url-prefix() {
   fieldset { display: table-cell; }
 }

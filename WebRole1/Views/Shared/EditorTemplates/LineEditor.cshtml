@@ -1,0 +1,36 @@
+﻿@model WebRole1.Models.Line
+
+<div class="editorRow">
+    @using (Html.BeginCollectionItem("lineList"))
+    {
+        <div class="row">
+            <div class="col-md-3 col-xs-12">
+                @Html.LabelFor(model => model.County, new {@class="col-md-6 col-xs-12" })
+                @Html.DropDownListFor(model => model.County, new SelectList(WebRole1.Models.SearchDB.Counties), new { @id = "counties-dropdown", @Title = "list of counties", @class = "col-md-6 col-xs-12" })
+                @Html.DropDownListFor(model => model.PostCode, new SelectList(WebRole1.Models.SearchDB.PostalCodes), new { @id = "toggle-postcode-dropdown", @Title = "list of post codes", @class = "col-md-6 col-md-offset-6 col-xs-12" })
+            </div>
+            <div class="col-md-2 col-xs-12">
+                @Html.LabelFor(model => model.Area, new { @class = "col-md-4 col-xs-12" })
+                @Html.EditorFor(model => model.Area, new { htmlAttributes = new { @Title = "choose an area in the county", @class = "col-md-8 col-xs-12" } })
+            </div>
+            <div class="col-md-2 col-xs-12">
+                @Html.LabelFor(model => model.Year, new { @class = "col-md-5 col-xs-12" })
+                @Html.DropDownListFor(model => model.Year, new SelectList(WebRole1.Models.SearchDB.Years), new { id = "", @Title = "choose a year", @class = "col-md-7 col-xs-12" })
+            </div>
+            <div class="col-md-3 col-xs-12">
+                @Html.LabelFor(model => model.Date, new { @class = "col-md-6 col-xs-12" })
+                @Html.DropDownListFor(model => model.Date, new SelectList(WebRole1.Models.SearchDB.DatesBetween), new { id = "dates-dropdown1", @Title = "choose a date range", @class = "col-md-6 col-xs-12" })
+                @Html.DropDownListFor(model => model.Date, new SelectList(WebRole1.Models.SearchDB.DatesBetweenDublin), new { id = "dates-dropdown2", @Title = "choose a date range", @class = "col-md-6 col-xs-12" })
+            </div>
+            <div class="col-md-1 col-md-offset-0 col-xs-1 col-xs-offset-7">
+                <a href="#" class="btn btn-xs btn-danger glyphicon glyphicon-remove" onclick="$(this).parent().parent().remove();"> Delete</a>
+            </div>
+        </div>
+    }
+    
+</div>
+
+@{
+    Layout = null;
+}
+

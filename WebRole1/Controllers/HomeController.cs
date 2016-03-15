@@ -32,6 +32,7 @@ namespace WebRole1.Controllers
         [HttpPost]
         public ActionResult Contact(ContactForm c)
         {
+            // send email from returned contact form
             if (ModelState.IsValid)
             {
                 MailMessage msg = new MailMessage();
@@ -70,6 +71,28 @@ namespace WebRole1.Controllers
         public ActionResult Search(SearchDB searchFor)
         {
             return View(searchFor);
+        }
+
+        // GET: home/combined
+        [HttpGet]
+        public ActionResult Combined()
+        {
+            CombinedSearch cs = new CombinedSearch();
+            return View(cs);
+        }
+
+        // POST: home/combined
+        [HttpPost]
+        public ActionResult Combined(CombinedSearch cs)
+        {
+            return View(cs);
+        }
+
+        // POST: home/blankeditorrow
+        // return a blank line for combined search page
+        public ViewResult BlankEditorRow()
+        {
+            return View("~/Views/Shared/EditorTemplates/LineEditor.cshtml", new Line());
         }
     }
 }

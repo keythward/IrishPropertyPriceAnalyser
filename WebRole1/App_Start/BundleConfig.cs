@@ -11,6 +11,7 @@ namespace WebRole1
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
                         "~/Scripts/Search-Page.js",
+                        "~/Scripts/Highcharts-4.0.1/js/highcharts.js",
                         "~/Scripts/DataTables/jquery.dataTables.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
